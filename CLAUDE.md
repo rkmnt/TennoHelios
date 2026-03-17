@@ -1,3 +1,7 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # TennoHelios — Warframe Linux Overlay Tool
 
 ## Project Overview
@@ -171,6 +175,10 @@ cargo test --lib      # Run all unit tests
 cargo test --lib -- log_watcher  # Run only log_watcher tests
 cargo clippy          # Lint
 cargo check           # Type-check without building
+
+# Logging (set before running dev or tests)
+RUST_LOG=debug pnpm tauri dev          # Verbose Rust logs
+RUST_LOG=tennohelios_lib=debug cargo test --lib  # Debug logs in tests
 ```
 
 ## Architecture
@@ -179,10 +187,29 @@ cargo check           # Type-check without building
 src-tauri/src/
 ├── main.rs          — binary entry point (calls lib::run)
 ├── lib.rs           — Tauri setup, spawns log_watcher thread, forwards events to frontend
+│                      exposes set_log_path Tauri command (useful for dev/testing with custom EE.log)
 └── log_watcher.rs   — EE.log file watcher (notify crate), pattern detection, channel send
 src/
 ├── App.tsx          — Listens for "reward-screen-detected" Tauri event
 └── components/      — RewardOverlay, ItemCard, Settings (Phase 1, not yet built)
+```
+
+**Rust lib crate name:** `tennohelios_lib` (set in `Cargo.toml` `[lib]`). Use this name when filtering test output or setting `RUST_LOG`.
+
+**Custom Tailwind tokens** (defined in `tailwind.config.js`): `wf-bg`, `wf-surface`, `wf-border`, `wf-text`, `wf-plat` (green/platinum), `wf-ducat` (yellow/ducats), `wf-accent` (sky blue). Use these for all new UI components — do not add ad-hoc hex colors.
+
+**CSS animations** (defined in `src/index.css`): `card-in`, `scan-sweep`, `glow-pulse`, `arrow-bounce`, `header-in`, `best-pick-in`, `bracket-left`, `bracket-right`, `best-pick-text`. All animations use inline `style` props (not Tailwind `animate-*` classes) to support per-element delays.
+
+**Frontend component tree:**
+```
+App.tsx
+└── RewardOverlay.tsx        — 4-card layout + header + BestPickIndicator
+    ├── BestPickIndicator.tsx — animated brackets + chevron above best card
+    └── ItemCard.tsx          — single item card (uses useCountUp hook + PlatIcon/DucatIcon)
+        └── icons.tsx         — PlatIcon, DucatIcon (real PNG assets from Warframe wiki)
+src/hooks/useCountUp.ts       — animates number from 0 to target value
+src/assets/plat.png           — Warframe platinum icon (64×64)
+src/assets/ducat.png          — Warframe ducat icon (512×512, rendered larger to match visual weight)
 ```
 
 **Data flow (Phase 1):**
@@ -197,7 +224,18 @@ The `RecommendedWatcher` uses FSEvents on macOS and inotify on Linux. FSEvents i
 ## Phase Status
 - [x] Phase 1 scaffolding: Tauri + React + TypeScript + Tailwind
 - [x] `log_watcher.rs` — file watching + pattern detection + Tauri event emit
-- [ ] `screenshot.rs` — screen capture
+- [x] `ItemCard.tsx` — full design with animations, Warframe icons, count-up
+- [x] `RewardOverlay.tsx` — 4-card layout, BestPickIndicator, header
+- [x] `BestPickIndicator.tsx` — animated brackets, chevron, glow pulse
+- [x] `useCountUp.ts` — number scan-up animation hook
+- [x] `src/assets/plat.png` + `ducat.png` — real Warframe icons (from wiki)
+- [ ] `screenshot.rs` — screen capture (next after reboot)
 - [ ] `ocr.rs` — Tesseract OCR pipeline
 - [ ] `market_api.rs` — warframe.market REST client
-- [ ] Full Phase 1 UI (RewardOverlay, ItemCard)
+- [ ] Wire full pipeline: log → screenshot → OCR → prices → overlay
+
+## Next Session (after reboot)
+1. `pnpm tauri dev` — první spuštění po `rpm-ostree install` (kompilace ~10 min)
+2. Ověřit že log watcher detekuje EE.log v živé hře
+3. Začít `screenshot.rs` — Task 2.1 (xcap crate, X11/XWayland capture)
+4. Pak Task 2.2 — Wayland path přes `grim`

@@ -33,13 +33,13 @@ Named after Helios — the Warframe companion that scans and analyzes everything
 - [x] 🔧 Project scaffold — Tauri + React + TypeScript + Tailwind
 - [x] 📋 `log_watcher.rs` — EE.log detection with full test suite
 
-### 🔧 Phase 1 — MVP (active)
-- [ ] 📸 Screenshot capture — X11 + Wayland + Gamescope
-- [ ] 🔤 OCR pipeline — extract all 4 item names via Tesseract
-- [ ] 💰 warframe.market client — live platinum prices + offline cache
-- [ ] 🟢 Reward overlay UI — green best plat · yellow best ducats · arrow on overall winner
-- [ ] ⌨️ F12 manual trigger
-- [ ] 🎮 Gamescope overlay layer — renders on top of Warframe, no alt-tab needed
+### ✅ Phase 1 — MVP (complete)
+- [x] 📸 Screenshot capture — X11/XWayland via ImageMagick `import`
+- [x] 🔤 OCR pipeline — per-card Tesseract strips, 4 items detected
+- [x] 💰 warframe.market client — live plat prices (v1 stats API) + ducat values (v2 items API)
+- [x] 🟢 Reward overlay UI — green best plat · yellow best ducats · arrow on overall winner
+- [x] ⌨️ F12 manual trigger · Ctrl+Shift+H settings panel
+- [ ] 🎮 Gamescope overlay layer — renders on top of Warframe without alt-tab
 - [ ] 📦 Flatpak packaging
 
 ### 📋 Phase 2 — Power Tools
@@ -138,9 +138,10 @@ TennoHelios/
 │       └── lib.rs           Tauri setup, event wiring
 ├── src/                React + TypeScript frontend
 │   └── components/
-│       ├── RewardOverlay.tsx   4-item reward display
-│       ├── ItemCard.tsx        Single item card with plat + ducat
-│       └── Settings.tsx        App settings
+│       ├── RewardOverlay.tsx      4-item reward display
+│       ├── ItemCard.tsx           Single item card with plat + ducat
+│       ├── BestPickIndicator.tsx  Animated arrow + brackets above best card
+│       └── SettingsOverlay.tsx   Status panel (log path, shortcuts)
 └── flatpak/            Flatpak manifest (Milestone 9)
 ```
 

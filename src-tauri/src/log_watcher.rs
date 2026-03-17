@@ -20,20 +20,25 @@ use std::{
 use log::{debug, error, info, warn};
 use notify::{Config, Event, EventKind, RecommendedWatcher, RecursiveMode, Watcher};
 
-/// Sent through the channel when a reward screen is detected.
+/// Sent through the channel on reward screen state changes.
 #[derive(Debug, Clone)]
-pub struct RewardScreenEvent {
-    /// The raw log line that triggered detection.
-    pub trigger_line: String,
+pub enum RewardScreenEvent {
+    /// Reward choice screen appeared — show overlay.
+    Show { trigger_line: String },
+    /// Reward choice screen dismissed — hide overlay.
+    Hide,
 }
 
 /// Patterns that indicate the relic reward screen is visible.
 /// Ordered from most specific / earliest to least.
-const TRIGGER_PATTERNS: &[&str] = &[
-    // Reward choice UI created — fires as screen appears
+/// Lines that trigger showing the overlay.
+const SHOW_PATTERNS: &[&str] = &[
     "Created /Lotus/Interface/ProjectionRewardChoice.swf",
-    // Fallback: older log format seen in some Proton builds
-    "Pause countdown done",
+];
+
+/// Lines that trigger hiding the overlay (reward screen closed).
+const HIDE_PATTERNS: &[&str] = &[
+    "Relic reward screen shut down",
 ];
 
 /// Watch `log_path` for reward screen events and send them on `tx`.
@@ -119,13 +124,10 @@ fn read_new_lines(log_path: &PathBuf, position: &mut u64) -> Option<RewardScreen
             Ok(text) => {
                 debug!("EE.log line: {text}");
                 if found.is_none() {
-                    for &pattern in TRIGGER_PATTERNS {
-                        if text.contains(pattern) {
-                            found = Some(RewardScreenEvent {
-                                trigger_line: text.clone(),
-                            });
-                            break;
-                        }
+                    if SHOW_PATTERNS.iter().any(|p| text.contains(p)) {
+                        found = Some(RewardScreenEvent::Show { trigger_line: text });
+                    } else if HIDE_PATTERNS.iter().any(|p| text.contains(p)) {
+                        found = Some(RewardScreenEvent::Hide);
                     }
                 }
             }
@@ -181,21 +183,13 @@ mod tests {
 
         let result = read_new_lines(&path, &mut pos);
         assert!(result.is_some(), "should detect reward screen");
-        let event = result.unwrap();
+        let RewardScreenEvent::Show { trigger_line } = result.unwrap() else {
+            panic!("expected Show event");
+        };
         assert!(
-            event.trigger_line.contains("ProjectionRewardChoice"),
+            trigger_line.contains("ProjectionRewardChoice"),
             "trigger_line should contain the pattern"
         );
-    }
-
-    #[test]
-    fn detects_pause_countdown_fallback() {
-        let log = make_log("1.0 Sys [Info]: Pause countdown done\n");
-        let path = log.path().to_path_buf();
-        let mut pos = 0u64;
-
-        let result = read_new_lines(&path, &mut pos);
-        assert!(result.is_some(), "should detect via fallback pattern");
     }
 
     #[test]
@@ -318,10 +312,12 @@ mod tests {
             .recv_timeout(Duration::from_secs(5))
             .expect("detection loop should find trigger within 5 s");
 
+        let RewardScreenEvent::Show { trigger_line } = event else {
+            panic!("expected Show event, got Hide");
+        };
         assert!(
-            event.trigger_line.contains("ProjectionRewardChoice"),
-            "unexpected trigger_line: {:?}",
-            event.trigger_line
+            trigger_line.contains("ProjectionRewardChoice"),
+            "unexpected trigger_line: {trigger_line:?}"
         );
     }
 }

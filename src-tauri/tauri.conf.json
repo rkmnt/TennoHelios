@@ -14,12 +14,14 @@
       {
         "title": "TennoHelios",
         "width": 900,
-        "height": 600,
-        "resizable": true,
+        "height": 200,
+        "resizable": false,
         "fullscreen": false,
-        "transparent": false,
-        "decorations": true,
-        "alwaysOnTop": false
+        "transparent": true,
+        "decorations": false,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "focus": false
       }
     ],
     "security": {

@@ -27,30 +27,35 @@ Named after Helios — the Warframe companion that scans and analyzes everything
 
 ---
 
-## 🎯 Features
+## 🗺️ Roadmap
 
-### Phase 1 — MVP (in progress)
+### ✅ Phase 0 — Foundation
+- [x] 🔧 Project scaffold — Tauri + React + TypeScript + Tailwind
+- [x] 📋 `log_watcher.rs` — EE.log detection with full test suite
 
-- 🔍 **Automatic reward detection** — watches `EE.log` for relic reward screen events
-- 📸 **Instant screenshot** — captures the screen the moment the reward UI appears
-- 🔤 **OCR item recognition** — extracts all 4 item names using Tesseract
-- 💰 **Live platinum prices** — fetches real sell orders from [warframe.market](https://warframe.market)
-- 🪙 **Ducat values** — shows Void Trader ducat value for every item
-- 🟢 **Best pick highlight** — green = best platinum, yellow = best ducats, arrow on the overall winner
-- ⌨️ **F12 manual trigger** — force the overlay any time you need it
-- 🎮 **Gamescope overlay** — renders on top of Warframe inside Gamescope (no alt-tab needed)
-- 💾 **Offline price cache** — works even when warframe.market is unreachable
+### 🔧 Phase 1 — MVP (active)
+- [ ] 📸 Screenshot capture — X11 + Wayland + Gamescope
+- [ ] 🔤 OCR pipeline — extract all 4 item names via Tesseract
+- [ ] 💰 warframe.market client — live platinum prices + offline cache
+- [ ] 🟢 Reward overlay UI — green best plat · yellow best ducats · arrow on overall winner
+- [ ] ⌨️ F12 manual trigger
+- [ ] 🎮 Gamescope overlay layer — renders on top of Warframe, no alt-tab needed
+- [ ] 📦 Flatpak packaging
 
-### Coming Soon
+### 📋 Phase 2 — Power Tools
+- [ ] 📦 Inventory tracker — total platinum worth at a glance
+- [ ] 🪙 Ducat optimizer — best items to sell to Baro Ki'Teer
+- [ ] 💬 Trade chat generator — auto-format WTS/WTB messages
+- [ ] 📊 Session earnings — track platinum earned per play session
+- [ ] 🔔 Deal alerts — notify when an item drops below your price threshold
 
-- 📦 **Inventory tracker** — know your total platinum worth at a glance *(Phase 2)*
-- 🪙 **Ducat optimizer** — find the best items to sell to Baro Ki'Teer *(Phase 2)*
-- 💬 **Trade chat generator** — auto-format WTS/WTB messages *(Phase 2)*
-- 📊 **Session earnings** — track platinum earned per play session *(Phase 2)*
-- 🔔 **Deal alerts** — get notified when an item drops below your price threshold *(Phase 2)*
-- ⚔️ **Riven analyzer** — price estimation for rivens *(Phase 3)*
-- 🌀 **Void fissure tracker** — see which active fissures are worth running *(Phase 3)*
-- 🖥️ **Native Wayland overlay** — without requiring Gamescope *(Phase 3)*
+### 🚀 Phase 3 — Advanced
+- [ ] ⚔️ Riven analyzer — price estimation for rivens
+- [ ] 🌀 Void fissure tracker — which active fissures are worth running
+- [ ] 🖥️ Native Wayland overlay — without requiring Gamescope
+- [ ] 🎮 Steam Deck UI optimizations — larger touch targets, controller-friendly layout
+
+Full implementation details and task breakdown: [TASKS.md](TASKS.md)
 
 ---
 
@@ -138,74 +143,6 @@ TennoHelios/
 │       └── Settings.tsx        App settings
 └── flatpak/            Flatpak manifest (Milestone 9)
 ```
-
----
-
-## 🗺️ Roadmap
-
-### ✅ Phase 0 — Foundation
-- [x] Project scaffold (Tauri + React + TypeScript + Tailwind)
-- [x] `log_watcher.rs` — EE.log detection with full test suite
-
-### 🔧 Phase 1 — MVP (active)
-- [ ] Screenshot capture (X11 + Wayland/Gamescope)
-- [ ] OCR pipeline with Tesseract
-- [ ] warframe.market API client + price cache
-- [ ] Reward overlay UI with platinum/ducat highlights
-- [ ] F12 manual trigger
-- [ ] Gamescope overlay layer
-- [ ] Flatpak packaging
-
-### 📋 Phase 2 — Power Tools
-- [ ] Inventory tracker
-- [ ] Ducat optimizer (Baro Ki'Teer prep)
-- [ ] Trade chat message generator
-- [ ] Session earnings tracker
-- [ ] Deal alerts
-
-### 🚀 Phase 3 — Advanced
-- [ ] Riven analyzer
-- [ ] Void fissure tracker
-- [ ] Native Wayland overlay (without Gamescope)
-- [ ] Steam Deck UI optimizations
-
-Full task breakdown with implementation details: [TASKS.md](TASKS.md)
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome — and genuinely needed. This is a one-person side project
-targeting a platform that most Warframe tooling ignores.
-
-If you use Warframe on Linux, you are the target audience. Your bug reports, real
-screenshot fixtures, and EE.log samples are just as valuable as code.
-
-**Good places to start:**
-
-- Pick any unchecked task from [TASKS.md](TASKS.md)
-- Test on your specific hardware (Steam Deck? Bazzite? Arch + Gamescope?)
-- Contribute real reward screen fixtures for the OCR test suite (`src-tauri/tests/fixtures/`)
-- Report EE.log trigger patterns that are missing or wrong
-
-```bash
-# Fork → branch → PR
-git checkout -b feature/your-feature
-# ... make changes ...
-git push origin feature/your-feature
-```
-
-Please keep PRs focused — one task per PR. Every PR must compile and pass
-`cargo test --lib` and `pnpm build`.
-
----
-
-## ☕ Support
-
-TennoHelios is free forever. If it saves you platinum, consider buying me a coffee.
-
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20the%20project-ff5e5b?logo=ko-fi&logoColor=white)](https://ko-fi.com)
-[![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-Sponsor-ea4aaa?logo=github&logoColor=white)](https://github.com/sponsors)
 
 ---
 

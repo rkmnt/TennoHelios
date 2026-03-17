@@ -1,0 +1,48 @@
+# Rust / Cargo
+target/
+Cargo.lock
+
+# Node / npm
+node_modules/
+dist/
+.pnp
+.pnp.js
+
+# Tauri
+src-tauri/target/
+src-tauri/WixTools/
+
+# Build artifacts
+*.o
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+!EE.log.sample
+
+# Flatpak build
+.flatpak-builder/
+repo/
+*.flatpak
+
+# Cache
+.cache/

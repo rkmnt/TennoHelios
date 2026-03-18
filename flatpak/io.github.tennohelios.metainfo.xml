@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.tennohelios</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-only</project_license>
+
+  <name>TennoHelios</name>
+  <summary>Warframe relic reward overlay for Linux</summary>
+
+  <description>
+    <p>
+      TennoHelios is a Linux-native companion overlay for Warframe. When the relic
+      reward screen appears, TennoHelios automatically detects it, reads the item
+      names via OCR, fetches live platinum and ducat values from warframe.market,
+      and displays a transparent overlay showing all four rewards with price
+      highlights — so you can make the best choice without alt-tabbing.
+    </p>
+    <ul>
+      <li>Automatic reward screen detection via EE.log</li>
+      <li>OCR-based item name extraction (Tesseract)</li>
+      <li>Live platinum and ducat prices from warframe.market</li>
+      <li>Best platinum pick highlighted in green, best ducat pick in yellow</li>
+      <li>Non-intrusive transparent overlay — auto-hides when reward screen closes</li>
+      <li>Works on Bazzite, Steam Deck (SteamOS), and any Wayland/XWayland desktop</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">io.github.tennohelios.desktop</launchable>
+
+  <url type="homepage">https://github.com/rkmnt/TennoHelios</url>
+  <url type="bugtracker">https://github.com/rkmnt/TennoHelios/issues</url>
+
+  <provides>
+    <binary>tennohelios</binary>
+  </provides>
+
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="0.1.0" date="2026-03-18">
+      <description>
+        <p>Initial release — full relic reward detection pipeline.</p>
+      </description>
+    </release>
+  </releases>
+
+  <screenshots>
+    <!-- TODO: add screenshot once UI is stable -->
+  </screenshots>
+</component>

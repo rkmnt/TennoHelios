@@ -197,22 +197,22 @@ from a later milestone. Each task is scoped to one focused session.
   - Done: calling the Tauri command `simulate_reward` (added for testing) makes the
     overlay appear with real-looking hardcoded data, then disappear after 30 s
 
-- [ ] Task 6.4 — `Settings.tsx` page: configure EE.log path | macOS ✅
-  - Single setting for now: EE.log file path with a file-picker button
-    (`tauri-plugin-dialog` for native file dialog)
-  - Persist to `~/.config/tennohelios/settings.json` via a Tauri command
-  - Done: changing the path in Settings and restarting the app uses the new path
+- [x] Task 6.4 — `SettingsOverlay.tsx`: settings window | macOS ✅
+  - Separate non-transparent window opened via system tray ("Settings" menu item)
+  - Draggable, resizable (min 560×400, default 720×560), always on top
+  - Settings: EE.log path (editable, Apply/Reset), screenshot delay (ms input),
+    overlay Y position (slider, live preview), Warframe version (read from EE.log)
+  - Capabilities: `core:window:allow-start-dragging` in `capabilities/settings.json`
+  - Done: settings window opens, all controls work, changes apply immediately
 
 ---
 
 ## Milestone 7 — Hotkey + Overlay Window Behaviour
 
-- [ ] Task 7.1 — F12 manual trigger hotkey | macOS ✅
-  - Add `tauri-plugin-global-shortcut` to Cargo.toml and tauri.conf.json capabilities
-  - Register F12; on press: run the full screenshot → OCR → prices pipeline and show overlay
-  - Done: pressing F12 while the app is running triggers the overlay
-  - Ref: wfinfo-ng uses `global-hotkey 0.4.2`; note that Tauri v2 has a first-party
-    plugin that supersedes it
+- [ ] Task 7.1 — Manual trigger hotkey | macOS ✅
+  - ~~F12 removed~~ — decided against a global hotkey (interferes with in-game bindings)
+  - Alternative: tray icon click or a dedicated button in Settings window
+  - Skipped for now; revisit if users request it
 
 - [ ] Task 7.2 — Always-on-top transparent overlay window | Linux 🐧
   - In `tauri.conf.json`: set `"alwaysOnTop": true`, `"transparent": true`,

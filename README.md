@@ -38,7 +38,8 @@ Named after Helios — the Warframe companion that scans and analyzes everything
 - [x] 🔤 OCR pipeline — per-card Tesseract strips, 4 items detected
 - [x] 💰 warframe.market client — live plat prices (v1 stats API) + ducat values (v2 items API)
 - [x] 🟢 Reward overlay UI — green best plat · yellow best ducats · arrow on overall winner
-- [x] ⌨️ F12 manual trigger · Ctrl+Shift+H settings panel
+- [x] 🖥️ System tray — tray icon with Settings and Quit menu items
+- [x] ⚙️ Settings window — draggable, resizable; EE.log path · screenshot delay · overlay position · Warframe version
 - [ ] 🎮 Gamescope overlay layer — renders on top of Warframe without alt-tab
 - [ ] 📦 Flatpak packaging
 
@@ -141,7 +142,7 @@ TennoHelios/
 │       ├── RewardOverlay.tsx      4-item reward display
 │       ├── ItemCard.tsx           Single item card with plat + ducat
 │       ├── BestPickIndicator.tsx  Animated arrow + brackets above best card
-│       └── SettingsOverlay.tsx   Status panel (log path, shortcuts)
+│       └── SettingsOverlay.tsx   Settings window (log path, delay, overlay position)
 └── flatpak/            Flatpak manifest (Milestone 9)
 ```
 

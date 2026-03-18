@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=TennoHelios
+Comment=Warframe relic reward overlay for Linux
+Exec=tennohelios
+Icon=io.github.tennohelios
+Type=Application
+Categories=Game;Utility;
+Keywords=warframe;overlay;relic;platinum;market;
+StartupNotify=false
+NoDisplay=false

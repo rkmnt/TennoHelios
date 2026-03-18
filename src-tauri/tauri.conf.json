@@ -15,7 +15,7 @@
         "title": "TennoHelios",
         "width": 900,
         "height": 200,
-        "resizable": false,
+        "resizable": true,
         "fullscreen": false,
         "transparent": true,
         "decorations": false,

@@ -1,0 +1,141 @@
+app-id: io.github.tennohelios
+runtime: org.gnome.Platform
+runtime-version: "49"
+# Use Freedesktop SDK (not GNOME SDK) so that rust-stable/node22 extensions
+# resolve correctly — GNOME 49 is based on Freedesktop 25.08.
+sdk: org.freedesktop.Sdk//25.08
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.node22
+command: tennohelios
+
+finish-args:
+  # X11 access — required for xdotool (window detection) and WebKitGTK overlay
+  - --socket=x11
+  # Network — warframe.market price API
+  - --share=network
+  # Home directory — EE.log lives in ~/.local/share/Steam/steamapps/compatdata/...
+  - --filesystem=home
+  # Force X11 backend for WebKitGTK (Wayland WebView is unstable for overlays)
+  - --env=GDK_BACKEND=x11
+  # Disable DMA-BUF renderer (required on XWayland for WebKitGTK stability)
+  - --env=WEBKIT_DISABLE_DMABUF_RENDERER=1
+
+build-options:
+  append-path: /usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/node22/bin
+
+modules:
+
+  # ── Leptonica (Tesseract image processing dependency) ───────────────────────
+  - name: leptonica
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DBUILD_PROG=OFF
+      - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+    sources:
+      - type: git
+        url: https://github.com/DanBloomberg/leptonica
+        tag: 1.84.1
+
+  # ── Tesseract OCR engine ─────────────────────────────────────────────────────
+  - name: tesseract
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DBUILD_TRAINING_TOOLS=OFF
+    sources:
+      - type: git
+        url: https://github.com/tesseract-ocr/tesseract
+        tag: 5.4.1
+
+  # ── Tesseract English language data (tessdata_fast) ─────────────────────────
+  - name: tesseract-data-eng
+    buildsystem: simple
+    build-commands:
+      - install -Dm644 eng.traineddata /app/share/tessdata/eng.traineddata
+    sources:
+      - type: git
+        url: https://github.com/tesseract-ocr/tessdata_fast
+        tag: 4.1.0
+
+  # ── ImageMagick (screenshot capture + image manipulation) ───────────────────
+  - name: imagemagick
+    config-opts:
+      - --with-webp=no
+      - --with-openjp2=no
+      - --with-heic=no
+      - --disable-docs
+    sources:
+      - type: git
+        url: https://github.com/ImageMagick/ImageMagick
+        tag: 7.1.1-38
+
+  # ── xdotool (Warframe window detection + focus) ──────────────────────────────
+  - name: xdotool
+    buildsystem: simple
+    build-options:
+      env:
+        PREFIX: /app
+    build-commands:
+      - make PREFIX=/app install
+    sources:
+      - type: git
+        url: https://github.com/jordansissel/xdotool
+        tag: v3.20211022.1
+
+  # ── xwd (X11 window dump — used as screenshot backend) ──────────────────────
+  - name: xwd
+    buildsystem: autotools
+    sources:
+      - type: git
+        url: https://gitlab.freedesktop.org/xorg/app/xwd
+        tag: xwd-1.0.9
+
+  # ── TennoHelios ──────────────────────────────────────────────────────────────
+  #
+  # Offline source generation (required before first build):
+  #
+  #   # Cargo sources
+  #   pip install flatpak-cargo-generator
+  #   flatpak-cargo-generator src-tauri/Cargo.lock -o flatpak/cargo-sources.json
+  #
+  #   # npm/pnpm sources
+  #   pip install flatpak-node-generator
+  #   flatpak-node-generator pnpm pnpm-lock.yaml -o flatpak/npm-sources.json
+  #
+  # Then uncomment the two generated-sources lines below.
+  - name: tennohelios
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/node22/bin
+      env:
+        CARGO_HOME: /run/build/tennohelios/cargo
+        CARGO_NET_OFFLINE: "true"
+        npm_config_cache: /run/build/tennohelios/.npm
+    build-commands:
+      # Install pnpm
+      - npm install -g pnpm
+      # Install JS dependencies (offline — requires npm-sources.json)
+      - pnpm install --frozen-lockfile
+      # Build React frontend → dist/
+      - pnpm build
+      # Build Rust binary (embeds dist/ via tauri::generate_context!)
+      - cargo build --release --manifest-path src-tauri/Cargo.toml
+      # Install
+      - install -Dm755 src-tauri/target/release/tennohelios /app/bin/tennohelios
+      - install -Dm644 flatpak/io.github.tennohelios.desktop /app/share/applications/io.github.tennohelios.desktop
+      - install -Dm644 flatpak/io.github.tennohelios.metainfo.xml /app/share/metainfo/io.github.tennohelios.metainfo.xml
+      - install -Dm644 src-tauri/icons/128x128.png /app/share/icons/hicolor/128x128/apps/io.github.tennohelios.png
+      - install -Dm644 src-tauri/icons/32x32.png /app/share/icons/hicolor/32x32/apps/io.github.tennohelios.png
+    sources:
+      - type: dir
+        path: ..
+        skip:
+          - .flatpak-builder
+          - build-dir
+          - target
+          - node_modules
+          - dist
+      - cargo-sources.json
+      - npm-sources.json

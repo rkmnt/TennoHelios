@@ -229,13 +229,18 @@ The `RecommendedWatcher` uses FSEvents on macOS and inotify on Linux. FSEvents i
 - [x] `BestPickIndicator.tsx` — animated brackets, chevron, glow pulse
 - [x] `useCountUp.ts` — number scan-up animation hook
 - [x] `src/assets/plat.png` + `ducat.png` — real Warframe icons (from wiki)
-- [ ] `screenshot.rs` — screen capture (next after reboot)
-- [ ] `ocr.rs` — Tesseract OCR pipeline
-- [ ] `market_api.rs` — warframe.market REST client
-- [ ] Wire full pipeline: log → screenshot → OCR → prices → overlay
+- [x] `screenshot.rs` — X11/XWayland capture via ImageMagick `import`
+- [x] `ocr.rs` — Tesseract OCR pipeline (per-card strips)
+- [x] `market_api.rs` — warframe.market REST client + ducat values
+- [x] Full pipeline wired: log → screenshot → OCR → prices → overlay
+- [x] System tray — TrayIconBuilder with Settings + Quit menu items
+- [x] Settings window — separate WebviewWindow, draggable, resizable
+  - EE.log path (editable), screenshot delay, overlay Y position (live slider), Warframe version
+  - `capabilities/settings.json` — `core:window:allow-start-dragging`
+- [ ] Gamescope overlay layer (Task 7.3)
+- [ ] Flatpak packaging (Milestone 9)
 
-## Next Session (after reboot)
-1. `pnpm tauri dev` — první spuštění po `rpm-ostree install` (kompilace ~10 min)
-2. Ověřit že log watcher detekuje EE.log v živé hře
-3. Začít `screenshot.rs` — Task 2.1 (xcap crate, X11/XWayland capture)
-4. Pak Task 2.2 — Wayland path přes `grim`
+## Next Steps
+1. Test full pipeline end-to-end in live Warframe session on Bazzite
+2. Gamescope overlay layer — Task 7.3 (`_STEAM_GAME_OVERLAY` X11 property)
+3. Flatpak packaging — Milestone 9
